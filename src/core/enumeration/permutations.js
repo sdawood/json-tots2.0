@@ -171,8 +171,6 @@ function* generatorCombinator(sourceFns, {chosen = [], recur = false, permuteCho
         case 'restart': {
           record.status = 'on';
           ({value, done} = getOneFrom(nextSources)(record));
-          // nextSources[record.name + 1].status = 1;
-          // console.log({next: nextSources[record.name + 1]})
           break;
         }
         default: {
@@ -189,6 +187,7 @@ function* generatorCombinator(sourceFns, {chosen = [], recur = false, permuteCho
               }
               case 'end':{
                 record.done = true;
+                break;
               }
             }
           }
@@ -196,7 +195,7 @@ function* generatorCombinator(sourceFns, {chosen = [], recur = false, permuteCho
         }
       }
 
-      record.value = value || record.value; // off sources hold their value
+      record.value = value === undefined ? record.value : value; // off sources hold their value
       record.done = done === undefined ? record.done : done;
 
       acc.push(record);

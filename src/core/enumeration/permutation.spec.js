@@ -176,7 +176,7 @@ describe('scenario: combination generator choosing from list of values', () => {
     expect(result.length).toEqual(expectedResult.length);
     expect(result).toEqual(expectedResult);
     expect(resultSet.size).toEqual(result.length);
-    // expect(result.length).toEqual(100); // initially assumed to be 120 combination @TODO check combination count
+    expect(result.length).toEqual(144); // initially assumed to be 120 combination @TODO check combination count
   });
 });
 
