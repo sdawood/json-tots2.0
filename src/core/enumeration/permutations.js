@@ -115,8 +115,8 @@ function* __spinner(enumerables, {chosen = [], recur = false} = {}) {
 const values = records => records.map(({value}) => value);
 
 const allInState = state => records => records.reduce((acc, {status}) => {
-  return (acc === status) && (state === status);
-});
+  return acc && (state === status);
+}, true);
 
 const getOneFrom = nextSources => record => {
   let {value, done} = record.source.next();
@@ -126,12 +126,13 @@ const getOneFrom = nextSources => record => {
       record.source = record.sourceFn();
 
       nextSources[record.name + 1].status = 1;
-      console.log({next: nextSources[record.name + 1]})
+      // console.log({next: nextSources[record.name + 1]})
       ({value, done} = record.source.next());
     } else {
       console.log('******* restarting last source !!! ******* ');
       console.log('******* End of the line ... Folks ;) ******* ');
-      nextSources.map(record => record.status = 'restart');
+      nextSources.map(record => record.status = 'end');
+      console.log(nextSources);
     }
 
   }
@@ -186,6 +187,9 @@ function* generatorCombinator(sourceFns, {chosen = [], recur = false, permuteCho
                 record.status = 'off';
                 break;
               }
+              case 'end':{
+                record.done = true;
+              }
             }
           }
           break;
@@ -193,14 +197,14 @@ function* generatorCombinator(sourceFns, {chosen = [], recur = false, permuteCho
       }
 
       record.value = value || record.value; // off sources hold their value
-      record.done = done || record.done;
+      record.done = done === undefined ? record.done : done;
 
       acc.push(record);
       return acc;
     }, []);
 
 
-  } while (!allInState('restart')(nextSources));
+  } while (!allInState('end')(nextSources));
 }
 
 const generatorCombinatorPermutator = (sourceFns, options) => {
