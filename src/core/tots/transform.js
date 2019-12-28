@@ -50,6 +50,10 @@ const transform = (template, {
       value: F.pipes(predicates(F.isString), catches(parse))(value)
     }));
 
+    const xfEvalNode = F.mapTransformer(maybeAST => {
+
+    });
+
     const transducerFn = F.pipes(xfStringify, xfParseNode);
     const reducingFn = transducerFn((acc, {path, value}) => {
       acc[path] = value;
@@ -59,7 +63,7 @@ const transform = (template, {
 
     // const nodeIterator = nodes(template);
     const pipeline = F.pipes(
-      negates(F.isString),
+      negates(F.isString), //
       nodes, // json -> nodes iterator
       transduce
     );

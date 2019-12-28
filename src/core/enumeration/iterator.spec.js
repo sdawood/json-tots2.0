@@ -1,7 +1,7 @@
 const F = require('functional-pipelines');
 const jp = require('jsonpath');
 
-const {nodes} = require('./iterator');
+const {nodes, scan} = require('./iterator');
 
 describe('iterator', () => {
   const template = {
@@ -29,6 +29,30 @@ describe('iterator', () => {
     const reducingFn = transducerFn(F.append(/*reducingFn*/)); // append is a transducer fn that ignores its argument and returns a reducing function that appends to an array
     const paths = F.reduce(reducingFn, () => [], nodes(template));
     expect(paths).toEqual(jp.paths(template, '$..*').map(pathArray => jp.stringify(pathArray)));
+  });
+});
+
+describe('scenario: scan', () => {
+  it('works: ', () => {
+    function* withReturn() {
+      yield 1;
+      yield 2;
+      yield 3;
+      return 4;
+    }
+    const resultSeq = scan((acc, input) => {
+      acc.state = acc.state + input
+      return acc;
+    }, () => ({state: 0}), withReturn(), ({state}) => state);
+    const expectedResults = [1, 3, 6, 10];
+
+    let count = 0;
+    for(const [i, acc] of F.iterator(resultSeq, {indexed: true, kv: true})) {
+      expect(acc.state).toEqual(expectedResults[i]);
+      count = i;
+    }
+
+    expect(count).toEqual(expectedResults.length);
   });
 });
 

@@ -9,7 +9,12 @@
 
 tots = tot+
 
-tot =  (!"{" .)* template:TEMPLATE (!"{" .)* { return template }
+tot =  (!"{" .)* template:TEMPLATE (!"{" .)* { return {__template__: template} }
+	/ '@' fn:FUNCTION_NAME pipes:Pipe* { return {__invocation__: {
+    	function: fn,
+        args: [,,fn],
+        pipes
+    }}}
 
 TEMPLATE
   = "{" _ ops:OPERATORS? _ "{" _ jp:JP? _ "}" _ pipes:PIPES? _ "}" {
