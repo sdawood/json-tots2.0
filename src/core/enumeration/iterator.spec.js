@@ -41,7 +41,7 @@ describe('scenario: scan', () => {
       return 4;
     }
     const resultSeq = scan((acc, input) => {
-      acc.state = acc.state + input
+      acc.state = acc.state + input;
       return acc;
     }, () => ({state: 0}), withReturn(), ({state}) => state);
     const expectedResults = [1, 3, 6, 10];
